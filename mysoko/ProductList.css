@@ -1,0 +1,42 @@
+/* ProductList.css */
+
+.banner {
+    width: 100%;
+    height: auto;
+    margin-bottom: 2rem;
+  }
+  
+  .banner-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 5px;
+  }
+  
+  .container {
+    padding: 2rem;
+    margin-top: 1rem;
+  }
+  
+  h1 {
+    color: #343a40;
+    margin-bottom: 1rem;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  ul li {
+    background-color: white;
+    margin: 0.5rem 0;
+    padding: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  ul li:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
