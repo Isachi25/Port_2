@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useAuth } from '../authcontext/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import Button from '../button';
+import { login } from '../../services/authenticationService';
 
 const LoginForm = ({ onClose }) => {
   const [email, setEmail] = useState('');
@@ -9,12 +11,22 @@ const LoginForm = ({ onClose }) => {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    signIn();
-    onClose();
-    navigate('/dashboard');
+    try {
+      const response = await login(email, password);
+      console.log(response);
+      const { accessToken, retailer } = response.data;
+      // Store the accessToken in sessionStorage
+      sessionStorage.setItem('accessToken', accessToken);
+      // Assuming the backend returns a token and retailer data
+      signIn({ accessToken, retailer });
+      onClose();
+      navigate('/dashboard');
+    } catch (error) {
+      // Handle login failure (e.g., show an error message)
+      console.error('Login failed:', error);
+    }
   };
 
   return (
@@ -26,7 +38,7 @@ const LoginForm = ({ onClose }) => {
           id="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
           required
         />
       </div>
@@ -37,7 +49,7 @@ const LoginForm = ({ onClose }) => {
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm text-black"
           required
         />
       </div>
@@ -48,6 +60,10 @@ const LoginForm = ({ onClose }) => {
       </div>
     </form>
   );
+};
+
+LoginForm.propTypes = {
+  onClose: PropTypes.func.isRequired,
 };
 
 export default LoginForm;
