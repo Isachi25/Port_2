@@ -19,6 +19,8 @@ const LoginForm = ({ onClose }) => {
       const { accessToken, retailer } = response.data;
       // Store the accessToken in sessionStorage
       sessionStorage.setItem('accessToken', accessToken);
+      // Store the retailer id in sessionStorage
+      sessionStorage.setItem('retailerId', retailer.id);
       // Assuming the backend returns a token and retailer data
       signIn({ accessToken, retailer });
       onClose();

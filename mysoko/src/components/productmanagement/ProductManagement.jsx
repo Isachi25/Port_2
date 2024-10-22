@@ -1,9 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import Button from '../button';
+import {
+  createProduct,
+  getProducts,
+  updateProduct,
+  deleteProduct,
+} from '../../services/productsServices';
+import { apiBaseUrl } from '../../../environment';
 
 const ProductManagement = ({ products, setProducts }) => {
-  const [newProduct, setNewProduct] = useState({ name: '', price: '', availability: '', description: '', image: null });
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    price: '',
+    availability: '',
+    description: '',
+    image: null,
+    category: 'poultry',
+  });
   const [editingProduct, setEditingProduct] = useState(null);
+  const [isFetched, setIsFetched] = useState(false); // Add this state
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await getProducts();
+        console.log(response);
+        if (response.statusCode === 200 && response.status === 'success') {
+          setProducts(response.data);
+        } else {
+          console.error('Error fetching products:', response.message);
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    if (!isFetched) { // Check if products have already been fetched
+      fetchProducts();
+      setIsFetched(true); // Set the flag to true after fetching
+    }
+  }, [isFetched, setProducts]); 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -11,20 +48,35 @@ const ProductManagement = ({ products, setProducts }) => {
   };
 
   const handleFileChange = (e) => {
-    setNewProduct({ ...newProduct, image: URL.createObjectURL(e.target.files[0]) });
+    setNewProduct({ ...newProduct, image: e.target.files[0] });
   };
 
-  const handleAddProduct = (e) => {
+  const handleAddProduct = async (e) => {
     e.preventDefault();
-    setProducts((prevProducts) => {
+    try {
       if (editingProduct !== null) {
-        return prevProducts.map((product, index) => (index === editingProduct ? newProduct : product));
+        await updateProduct(products[editingProduct].id, newProduct);
+        setProducts((prevProducts) =>
+          prevProducts.map((product, index) =>
+            index === editingProduct ? { ...newProduct, image: URL.createObjectURL(newProduct.image) } : product
+          )
+        );
       } else {
-        return [...prevProducts, newProduct];
+        const createdProduct = await createProduct(newProduct);
+        setProducts((prevProducts) => [...prevProducts, { ...createdProduct, image: URL.createObjectURL(createdProduct.image) }]);
       }
-    });
-    setEditingProduct(null);
-    setNewProduct({ name: '', price: '', availability: '', description: '', image: null });
+      setEditingProduct(null);
+      setNewProduct({
+        name: '',
+        price: '',
+        availability: '',
+        description: '',
+        image: null,
+        category: 'poultry',
+      });
+    } catch (error) {
+      console.error('Error adding/updating product:', error);
+    }
   };
 
   const handleEditProduct = (index) => {
@@ -32,8 +84,23 @@ const ProductManagement = ({ products, setProducts }) => {
     setNewProduct(products[index]);
   };
 
-  const handleDeleteProduct = (index) => {
-    setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
+  const handleDeleteProduct = async (index) => {
+    try {
+      await deleteProduct(products[index].id);
+      setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
+    } catch (error) {
+      console.error('Error deleting product:', error);
+    }
+  };
+
+  const getImageUrl = (image) => {
+    console.log('image:', image);
+    if (typeof image === 'string') {
+      return `${apiBaseUrl}/${image}`; // Prepend base URL to the relative path
+    } else if (image instanceof File) {
+      return URL.createObjectURL(image);
+    }
+    return null;
   };
 
   return (
@@ -71,6 +138,17 @@ const ProductManagement = ({ products, setProducts }) => {
           onChange={handleInputChange}
           className="mb-2 p-2 border rounded w-full"
         />
+        <select
+          name="category"
+          value={newProduct.category}
+          onChange={handleInputChange}
+          className="mb-2 p-2 border rounded w-full"
+        >
+          <option value="poultry">Poultry</option>
+          <option value="vegetables">Vegetables</option>
+          <option value="fruits">Fruits</option>
+          <option value="cereals">Cereals</option>
+        </select>
         <input
           type="file"
           name="image"
@@ -89,24 +167,26 @@ const ProductManagement = ({ products, setProducts }) => {
             <th className="border p-2">Price</th>
             <th className="border p-2">Availability</th>
             <th className="border p-2">Description</th>
+            <th className="border p-2">Category</th>
             <th className="border p-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          {products.map((product, index) => (
-            <tr key={index} className="hover:bg-gray-100 transition duration-200 ease-in-out">
+          {Array.isArray(products) && products.map((product) => (
+            <tr key={product.id} className="hover:bg-gray-100 transition duration-200 ease-in-out">
               <td className="border p-2">
-                {product.image && <img src={product.image} alt={product.name} className="w-16 h-16 object-cover" />}
+                {product.image && <img src={getImageUrl(product.image)} alt={product.name} className="w-16 h-16 object-cover" />}
               </td>
               <td className="border p-2">{product.name}</td>
               <td className="border p-2">{product.price}</td>
               <td className="border p-2">{product.availability}</td>
               <td className="border p-2">{product.description}</td>
+              <td className="border p-2">{product.category}</td>
               <td className="border p-2">
-                <Button onClick={() => handleEditProduct(index)} isLoading={false} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2 hover:bg-yellow-600 transition duration-200 ease-in-out">
+                <Button onClick={() => handleEditProduct(product.id)} isLoading={false} className="bg-yellow-500 text-white px-2 py-1 rounded mr-2 hover:bg-yellow-600 transition duration-200 ease-in-out">
                   Edit
                 </Button>
-                <Button onClick={() => handleDeleteProduct(index)} isLoading={false} className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition duration-200 ease-in-out">
+                <Button onClick={() => handleDeleteProduct(product.id)} isLoading={false} className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition duration-200 ease-in-out">
                   Delete
                 </Button>
               </td>
@@ -116,6 +196,11 @@ const ProductManagement = ({ products, setProducts }) => {
       </table>
     </div>
   );
+};
+
+ProductManagement.propTypes = {
+  products: PropTypes.array.isRequired,
+  setProducts: PropTypes.func.isRequired,
 };
 
 export default ProductManagement;
