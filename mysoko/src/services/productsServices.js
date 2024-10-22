@@ -1,9 +1,10 @@
 import { apiBaseUrl } from '../../environment';
 import axios from 'axios';
 
-async function createProduct(retailerId, name, price, availability, category, description, image) {
+async function createProduct(name, price, availability, category, description, image) {
     try {
         const token = sessionStorage.getItem('accessToken');
+        const retailerId = sessionStorage.getItem('retailerId');
         const formData = new FormData();
         formData.append('retailerId', retailerId);
         formData.append('name', name);
@@ -59,8 +60,9 @@ async function getProducts() {
 
 async function updateProduct(id, product) {
     try {
-        const { retailerId, name, price, availability, category, description, image } = product;
+        const { name, price, availability, category, description, image } = product;
         const token = sessionStorage.getItem('accessToken');
+        const retailerId = sessionStorage.getItem('retailerId');
         const formData = new FormData();
         formData.append('retailerId', retailerId);
         formData.append('name', name);
