@@ -1,8 +1,41 @@
 import { apiBaseUrl } from '../../environment';
 import axios from 'axios';
 
-async function createProduct(name, price, availability, category, description, image) {
+async function createProduct(product) {
     try {
+        const token = sessionStorage.getItem('accessToken');
+        const retailerId = sessionStorage.getItem('retailerId');
+        const formData = new FormData();
+        formData.append('retailerId', retailerId);
+        formData.append('name', product.name);
+        formData.append('price', product.price);
+        formData.append('availability', product.availability);
+        formData.append('category', product.category);
+        formData.append('description', product.description);
+        formData.append('image', product.image);
+
+        // Debugging: Log form data
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
+        const response = await axios.post(`${apiBaseUrl}/products`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+        return response.data;
+
+    } catch (error) {
+        console.error('Error:', error);
+        throw error;
+    }
+}
+
+async function updateProduct(id, product) {
+    try {
+        const { name, price, availability, category, description, image } = product;
         const token = sessionStorage.getItem('accessToken');
         const retailerId = sessionStorage.getItem('retailerId');
         const formData = new FormData();
@@ -13,15 +46,13 @@ async function createProduct(name, price, availability, category, description, i
         formData.append('category', category);
         formData.append('description', description);
         formData.append('image', image);
-
-        const response = await axios.post(`${apiBaseUrl}/products`, formData, {
+        const response = await axios.put(`${apiBaseUrl}/products/${id}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${token}`
-            },
+            }
         });
         return response.data;
-
     } catch (error) {
         console.error('Error:', error);
         throw error;
@@ -58,36 +89,10 @@ async function getProducts() {
     }
 }
 
-async function updateProduct(id, product) {
-    try {
-        const { name, price, availability, category, description, image } = product;
-        const token = sessionStorage.getItem('accessToken');
-        const retailerId = sessionStorage.getItem('retailerId');
-        const formData = new FormData();
-        formData.append('retailerId', retailerId);
-        formData.append('name', name);
-        formData.append('price', price);
-        formData.append('availability', availability);
-        formData.append('category', category);
-        formData.append('description', description);
-        formData.append('image', image);
-        const response = await axios.put(`${apiBaseUrl}/products/${id}`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error:', error);
-        throw error;
-    }
-}
-
 async function deleteProduct(id) {
     try {
         const token = sessionStorage.getItem('accessToken');
-        const response = await axios.delete(`${apiBaseUrl}/products/${id}`, {
+        const response = await axios.delete(`${apiBaseUrl}/products/${id}/permanent`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -99,10 +104,10 @@ async function deleteProduct(id) {
     }
 }
 
-async function deleteProductPermanently(id) {
+async function softDeleteProduct(id) {
     try {
         const token = sessionStorage.getItem('accessToken');
-        const response = await axios.delete(`${apiBaseUrl}/products/${id}/permanent`, {
+        const response = await axios.delete(`${apiBaseUrl}/products/${id}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -120,5 +125,5 @@ export {
     getProducts,
     updateProduct,
     deleteProduct,
-    deleteProductPermanently,
+    softDeleteProduct
 };

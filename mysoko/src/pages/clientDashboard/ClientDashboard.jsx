@@ -40,7 +40,7 @@ const ClientDashboard = () => {
           className="border p-2 rounded"
         >
           <option value="">All Categories</option>
-          <option value="Serials">Serials</option>
+          <option value="Cereals">Cereals</option>
           <option value="Vegetables">Vegetables</option>
           <option value="Fruits">Fruits</option>
           <option value="Poultry">Poultry</option>
