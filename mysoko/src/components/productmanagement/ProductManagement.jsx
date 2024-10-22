@@ -94,9 +94,9 @@ const ProductManagement = ({ products, setProducts }) => {
   };
 
   const getImageUrl = (image) => {
-    console.log('image:', image);
     if (typeof image === 'string') {
-      return `${apiBaseUrl}/${image}`; // Prepend base URL to the relative path
+      const extractedImage = image.split('/')[image.split('/').length - 1];
+      return `${apiBaseUrl}/uploads/${extractedImage}`;
     } else if (image instanceof File) {
       return URL.createObjectURL(image);
     }
@@ -179,7 +179,7 @@ const ProductManagement = ({ products, setProducts }) => {
               </td>
               <td className="border p-2">{product.name}</td>
               <td className="border p-2">{product.price}</td>
-              <td className="border p-2">{product.availability}</td>
+              <td className="border p-2">{product.availability ? 'Available' : 'Not Available'}</td>
               <td className="border p-2">{product.description}</td>
               <td className="border p-2">{product.category}</td>
               <td className="border p-2">
