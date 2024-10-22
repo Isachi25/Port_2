@@ -25,7 +25,6 @@ const ProductManagement = ({ products, setProducts }) => {
     const fetchProducts = async () => {
       try {
         const response = await getProducts();
-        console.log('Response:', response);
         if (response.statusCode === 200 && response.status === 'success') {
           setProducts(response.data);
         } else {

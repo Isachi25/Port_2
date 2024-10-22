@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '../../components/button'; // Import the Button component
+import Button from '../../components/button';
+import { apiBaseUrl } from '../../../environment';
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
@@ -15,9 +16,19 @@ const ProductCard = ({ product }) => {
     navigate('/cart');
   };
 
+  const getImageUrl = (image) => {
+    if (typeof image === 'string') {
+      const extractedImage = image.split('/').pop();
+      return `${apiBaseUrl}/uploads/${extractedImage}`;
+    } else if (image instanceof File) {
+      return URL.createObjectURL(image);
+    }
+    return null;
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 transition-transform transform hover:scale-105 hover:shadow-xl flex flex-col justify-between">
-      {product.image && <img src={product.image} alt={product.name} className="w-full h-48 object-cover mb-4" />}
+      {product.image && <img src={getImageUrl(product.image)} alt={product.name} className="w-full h-48 object-cover mb-4" />}
       <p className="text-gray-700 mb-4">{product.description}</p>
       <div className="flex justify-between items-end">
         <div className="flex flex-col items-start">
@@ -35,6 +46,17 @@ const ProductCard = ({ product }) => {
       </div>
     </div>
   );
+};
+
+ProductCard.propTypes = {
+  product: PropTypes.shape({
+    image: PropTypes.string,
+    name: PropTypes.string.isRequired,
+    price: PropTypes.number.isRequired,
+    availability: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default ProductCard;

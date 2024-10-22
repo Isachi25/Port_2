@@ -2,24 +2,27 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductCard from '../../components/productcard/ProductCard';
 import Button from '../../components/button/Button';
+import { getProducts } from '../../services/productsServices';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Placeholder for fetching products from the backend
-    const fetchedProducts = [
-      { id: 1, name: 'Product 1', price: 100 },
-      { id: 2, name: 'Product 2', price: 200 },
-      { id: 3, name: 'Product 3', price: 300 },
-      { id: 4, name: 'Product 4', price: 400 },
-      { id: 5, name: 'Product 5', price: 500 },
-      { id: 6, name: 'Product 6', price: 600 },
-      { id: 7, name: 'Product 7', price: 700 },
-      { id: 8, name: 'Product 8', price: 800 },
-    ];
-    setProducts(fetchedProducts);
+    const fetchProducts = async () => {
+      try {
+        const response = await getProducts();
+        if (response.statusCode === 200 && response.status === 'success') {
+          setProducts(response.data);
+        } else {
+          console.error('Error fetching products:', response.message);
+        }
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   const handleViewMore = () => {
@@ -34,7 +37,7 @@ const ProductList = () => {
 
       {/* Product Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-12">
-        {products.slice(0, 6).map((product) => (
+        {Array.isArray(products) && products.slice(0, 6).map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
