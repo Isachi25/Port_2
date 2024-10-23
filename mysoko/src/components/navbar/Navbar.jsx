@@ -3,15 +3,17 @@ import { Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import { useAuth } from '../authcontext/AuthContext';
-import Modal from '../modal';
-import LoginForm from '../signinform';
+import Modal from '../modal/Modal';
+import LoginForm from '../signinform/LoginForm';
 import SearchBar from '../searchbar/SearchBar';
+import SignUp from '../signup/SignUp';
 import logo from '../../assets/images/logo.png';
 
 const Navbar = ({ searchTerm, setSearchTerm }) => {
   const location = useLocation();
   const { isAuthenticated, signOut } = useAuth();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
 
   return (
     <header className="bg-green-900 text-white shadow-md z-50 mb-0 w-full">
@@ -63,14 +65,17 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
             ) : (
               <>
                 <button
-                  onClick={() => setIsModalOpen(true)}
+                  onClick={() => setIsLoginModalOpen(true)}
                   className="hover:text-gray-200 transition duration-200 ease-in-out"
                 >
                   Login
                 </button>
-                <Link to="/signup" className={`hover:text-gray-200 transition duration-200 ease-in-out ${location.pathname === '/signup' ? 'text-blue-200 font-bold' : ''}`}>
+                <button
+                  onClick={() => setIsSignUpModalOpen(true)}
+                  className="hover:text-gray-200 transition duration-200 ease-in-out"
+                >
                   Sign Up
-                </Link>
+                </button>
               </>
             )}
           </div>
@@ -78,8 +83,13 @@ const Navbar = ({ searchTerm, setSearchTerm }) => {
       </nav>
 
       {/* Modal for Sign In */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <LoginForm onClose={() => setIsModalOpen(false)} />
+      <Modal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)}>
+        <LoginForm onClose={() => setIsLoginModalOpen(false)} />
+      </Modal>
+
+      {/* Modal for Sign Up */}
+      <Modal isOpen={isSignUpModalOpen} onClose={() => setIsSignUpModalOpen(false)}>
+        <SignUp isOpen={isSignUpModalOpen} onClose={() => setIsSignUpModalOpen(false)} />
       </Modal>
     </header>
   );

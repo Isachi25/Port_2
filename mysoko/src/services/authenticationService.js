@@ -19,14 +19,14 @@ async function login(email, password) {
   }
 }
 
-async function createRetailer(name, email, password, farmName, address) {
+async function createRetailer(name, email, password, farmName, location) {
   try {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
     formData.append('password', password);
     formData.append('farmName', farmName);
-    formData.append('address', address);
+    formData.append('location', location);
 
     const response = await axios.post(`${apiBaseUrl}/retailers`, formData, {
       headers: {
@@ -50,13 +50,13 @@ async function getRetailer(id) {
   }
 }
 
-async function updateRetailer(id, name, email, farmName, address) {
+async function updateRetailer(id, name, email, farmName, location) {
   try {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
     formData.append('farmName', farmName);
-    formData.append('address', address);
+    formData.append('location', location);
 
     const response = await axios.put(`${apiBaseUrl}/retailers/${id}`, formData, {
       headers: {

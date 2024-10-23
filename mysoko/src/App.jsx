@@ -5,7 +5,7 @@ import ProductDetails from './pages/productDetails';
 import Cart from './pages/cart';
 import RetailerDashboard from './pages/retailerDashboard';
 import './App.css'; // Import the CSS file
-import RetailerSignUp from './pages/retailerSignUp';
+// import RetailerSignUp from './pages/retailerSignUp';
 import Checkout from './components/checkout';
 import { AuthProvider } from './components/authcontext/AuthContext';
 import Home from './pages/home/Home';
@@ -24,7 +24,7 @@ function App() {
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/dashboard" element={<RetailerDashboard />} />
-            <Route path="/signup" element={<RetailerSignUp />} />
+            {/* <Route path="/signup" element={<RetailerSignUp />} /> */}
             <Route path="/checkout" element={<Checkout />} /> 
             <Route path="/admin-dashboard" element={<AdminDashboard />} /> 
           </Routes>
