@@ -8,7 +8,7 @@ import LoginForm from '../signinform';
 import SearchBar from '../searchbar/SearchBar';
 import logo from '../../assets/images/logo.png';
 
-const Navbar = () => {
+const Navbar = ({ searchTerm, setSearchTerm }) => {
   const location = useLocation();
   const { isAuthenticated, signOut } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +39,7 @@ const Navbar = () => {
 
         <div className="flex items-center space-x-4">
           {/* Search Bar */}
-          <SearchBar />
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
 
           {/* Cart Button */}
           <div className="relative">

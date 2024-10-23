@@ -4,7 +4,7 @@ import ProductCard from '../../components/productcard/ProductCard';
 import Button from '../../components/button/Button';
 import { getProducts } from '../../services/productsServices';
 
-const ProductList = () => {
+const ProductList = ({ searchTerm }) => {
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
 
@@ -29,6 +29,10 @@ const ProductList = () => {
     navigate('/client-dashboard', { state: { products } });
   };
 
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-4xl font-bold mb-6 text-center text-gray-900">
@@ -36,11 +40,17 @@ const ProductList = () => {
       </h1>
 
       {/* Product Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-12">
-        {Array.isArray(products) && products.slice(0, 6).map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </div>
+      {filteredProducts.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mb-12">
+          {filteredProducts.slice(0, 6).map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center text-red-500 mt-4">
+          No products found matching your criteria.
+        </div>
+      )}
 
       {/* View More Button */}
       <div className="flex justify-center">

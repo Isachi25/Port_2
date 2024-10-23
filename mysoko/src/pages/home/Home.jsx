@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Banner from '../../components/banner/Banner';
 import ProductList from '../../pages/productList/ProductList';
 import AboutUs from '../../components/aboutus/AboutUs';
@@ -10,7 +9,7 @@ import Navbar from '../../components/navbar/Navbar';
 
 const Home = () => {
   const [products, setProducts] = useState([]);
-  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Example useEffect to populate products (replace with actual data fetching logic)
   useEffect(() => {
@@ -18,6 +17,7 @@ const Home = () => {
       // Simulate fetching data
       const fetchedProducts = [
         {
+          id: 1,
           name: 'Product 1',
           price: '$100',
           availability: 'In Stock',
@@ -36,12 +36,14 @@ const Home = () => {
 
   return (
     <div>
-      <Navbar />
+      <Navbar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       <div>
         <Banner />
 
         {/* Main Content */}
-        <ProductList products={products} setProducts={setProducts} showViewMore={false} />
+        <div id="product-list-section">
+          <ProductList products={products} searchTerm={searchTerm} />
+        </div>
 
         {/* About Us Section */}
         <AboutUs />
