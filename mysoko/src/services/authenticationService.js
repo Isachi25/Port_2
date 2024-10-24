@@ -7,7 +7,7 @@ async function login(email, password) {
     formData.append('email', email);
     formData.append('password', password);
 
-    const response = await axios.post(`${apiBaseUrl}/retailers/login`, formData, {
+    const response = await axios.post(`${apiBaseUrl}/auth/login`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -19,18 +19,20 @@ async function login(email, password) {
   }
 }
 
-async function createRetailer(name, email, password, farmName, location) {
+async function createRetailer(name, email, password, farmName, location, role) {
   try {
     const formData = new FormData();
+    console.log('Form data:', name, email, password, farmName, location, role);
     formData.append('name', name);
     formData.append('email', email);
     formData.append('password', password);
     formData.append('farmName', farmName);
     formData.append('location', location);
+    formData.append('role', role);
 
-    const response = await axios.post(`${apiBaseUrl}/retailers`, formData, {
+    const response = await axios.post(`${apiBaseUrl}/auth`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        // 'Content-Type': 'multipart/form-data',
       },
     });
     return response.data;
@@ -42,7 +44,7 @@ async function createRetailer(name, email, password, farmName, location) {
 
 async function getRetailer(id) {
   try {
-    const response = await axios.get(`${apiBaseUrl}/retailers/${id}`);
+    const response = await axios.get(`${apiBaseUrl}/auth/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error:', error);
@@ -58,7 +60,7 @@ async function updateRetailer(id, name, email, farmName, location) {
     formData.append('farmName', farmName);
     formData.append('location', location);
 
-    const response = await axios.put(`${apiBaseUrl}/retailers/${id}`, formData, {
+    const response = await axios.put(`${apiBaseUrl}/auth/${id}`, formData, {
       headers: {
         'Content-Type':'multipart/form-data'
       },
@@ -72,7 +74,7 @@ async function updateRetailer(id, name, email, farmName, location) {
 
 async function deleteRetailer(id) {
   try {
-    const response = await axios.delete(`${apiBaseUrl}/retailers/${id}`);
+    const response = await axios.delete(`${apiBaseUrl}/auth/${id}`);
     return response.data;
   } catch (error) {
     console.error('Error:', error);

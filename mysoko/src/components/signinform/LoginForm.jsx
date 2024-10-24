@@ -16,7 +16,7 @@ const LoginForm = ({ onClose }) => {
     try {
       const response = await login(email, password);
       console.log(response);
-      const { accessToken, retailer } = response.data;
+      const { accessToken, retailer, role } = response.data;
       // Store the accessToken in sessionStorage
       sessionStorage.setItem('accessToken', accessToken);
       // Store the retailer id in sessionStorage
@@ -24,7 +24,11 @@ const LoginForm = ({ onClose }) => {
       // Assuming the backend returns a token and retailer data
       signIn({ accessToken, retailer });
       onClose();
-      navigate('/dashboard');
+      if (role === 'admin') {
+        navigate('/admin-dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } catch (error) {
       // Handle login failure (e.g., show an error message)
       console.error('Login failed:', error);

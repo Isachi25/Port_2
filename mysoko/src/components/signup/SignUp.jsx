@@ -12,6 +12,7 @@ const SignUp = ({ isOpen, onClose }) => {
     password: '',
     farmName: '',
     location: '',
+    role: 'retailer',
   });
 
   const [errors, setErrors] = useState({});
@@ -31,6 +32,8 @@ const SignUp = ({ isOpen, onClose }) => {
     if (!formData.password) newErrors.password = 'Password is required';
     if (!formData.farmName) newErrors.farmName = 'Farm Name is required';
     if (!formData.location) newErrors.location = 'Location is required';
+    if (formData.password.length < 6) newErrors.password = 'Password must be at least 6 characters long';
+    if (!formData.role) newErrors.role = 'Role is required';
     return newErrors;
   };
 
@@ -42,12 +45,14 @@ const SignUp = ({ isOpen, onClose }) => {
     } else {
       setIsSubmitting(true);
       try {
+        console.log('Form data:', formData);
         const response = await createRetailer(
           formData.name,
           formData.email,
           formData.password,
           formData.farmName,
-          formData.location
+          formData.location,
+          formData.role
         );
         const accessToken = response.accessToken;
         const retailer = response.data;
@@ -138,6 +143,19 @@ const SignUp = ({ isOpen, onClose }) => {
               />
               {errors.location && <p className="text-red-500 text-sm">{errors.location}</p>}
             </div>
+            <div className="mb-4">
+              <label className="block text-gray-700">Role</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className="p-2 border rounded w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+              >
+                <option value="retailer">Retailer</option>
+                <option value="admin">Admin</option>
+              </select>
+              {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+              </div>
             <div className="flex justify-center">
               <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
                 Sign Up
