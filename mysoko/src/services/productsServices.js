@@ -14,11 +14,6 @@ async function createProduct(product) {
         formData.append('description', product.description);
         formData.append('image', product.image);
 
-        // Debugging: Log form data
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-
         const response = await axios.post(`${apiBaseUrl}/products`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',

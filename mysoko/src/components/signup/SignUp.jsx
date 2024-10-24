@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import Button from '../button';
 import { useAuth } from '../authcontext/AuthContext';
@@ -64,7 +65,11 @@ const SignUp = ({ isOpen, onClose }) => {
         signIn({ accessToken, retailer });
         setSuccessMessage('Sign up successful! Redirecting to dashboard...');
         setTimeout(() => {
-          navigate('/dashboard'); // Redirect to Retailer Dashboard
+          if (formData.role === 'admin') {
+            navigate('/admin-dashboard'); // Redirect to Admin Dashboard
+          } else {
+            navigate('/dashboard'); // Redirect to Retailer Dashboard
+          }
         }, 2000);
       } catch (error) {
         console.error('Sign up failed:', error);
@@ -84,9 +89,10 @@ const SignUp = ({ isOpen, onClose }) => {
           {errors.general && <p className="text-red-500 mb-4">{errors.general}</p>}
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
-              <label className="block text-gray-700">Name</label>
+              <label htmlFor="name" className="block text-gray-700">Name</label>
               <input
                 type="text"
+                id="name"
                 name="name"
                 placeholder="Enter your full name"
                 value={formData.name}
@@ -96,9 +102,10 @@ const SignUp = ({ isOpen, onClose }) => {
               {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700">Email</label>
+              <label htmlFor="email" className="block text-gray-700">Email</label>
               <input
                 type="email"
+                id="email"
                 name="email"
                 placeholder="Enter your email address"
                 value={formData.email}
@@ -108,9 +115,10 @@ const SignUp = ({ isOpen, onClose }) => {
               {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700">Password</label>
+              <label htmlFor="password" className="block text-gray-700">Password</label>
               <input
                 type="password"
+                id="password"
                 name="password"
                 placeholder="Create a password"
                 value={formData.password}
@@ -120,9 +128,10 @@ const SignUp = ({ isOpen, onClose }) => {
               {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700">Farm Name</label>
+              <label htmlFor="farmName" className="block text-gray-700">Farm Name</label>
               <input
                 type="text"
+                id="farmName"
                 name="farmName"
                 placeholder="Enter your farm name"
                 value={formData.farmName}
@@ -132,9 +141,10 @@ const SignUp = ({ isOpen, onClose }) => {
               {errors.farmName && <p className="text-red-500 text-sm">{errors.farmName}</p>}
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700">Location</label>
+              <label htmlFor="location" className="block text-gray-700">Location</label>
               <input
                 type="text"
+                id="location"
                 name="location"
                 placeholder="Enter your farm location"
                 value={formData.location}
@@ -144,8 +154,9 @@ const SignUp = ({ isOpen, onClose }) => {
               {errors.location && <p className="text-red-500 text-sm">{errors.location}</p>}
             </div>
             <div className="mb-4">
-              <label className="block text-gray-700">Role</label>
+              <label htmlFor="role" className="block text-gray-700">Role</label>
               <select
+                id="role"
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
@@ -155,7 +166,7 @@ const SignUp = ({ isOpen, onClose }) => {
                 <option value="admin">Admin</option>
               </select>
               {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
-              </div>
+            </div>
             <div className="flex justify-center">
               <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
                 Sign Up
@@ -166,6 +177,11 @@ const SignUp = ({ isOpen, onClose }) => {
       </div>
     </Modal>
   );
+};
+
+SignUp.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
 };
 
 export default SignUp;

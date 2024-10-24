@@ -3,13 +3,14 @@ import axios from 'axios';
 
 async function login(email, password) {
   try {
-    const formData = new FormData();
-    formData.append('email', email);
-    formData.append('password', password);
+    const formData = {
+      email,
+      password,
+    };
 
     const response = await axios.post(`${apiBaseUrl}/auth/login`, formData, {
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
       },
     });
     return response.data;
@@ -21,18 +22,18 @@ async function login(email, password) {
 
 async function createRetailer(name, email, password, farmName, location, role) {
   try {
-    const formData = new FormData();
-    console.log('Form data:', name, email, password, farmName, location, role);
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('password', password);
-    formData.append('farmName', farmName);
-    formData.append('location', location);
-    formData.append('role', role);
+    const formData = {
+      name,
+      email,
+      password,
+      farmName,
+      location,
+      role
+    };
 
     const response = await axios.post(`${apiBaseUrl}/auth`, formData, {
       headers: {
-        // 'Content-Type': 'multipart/form-data',
+        'Content-Type': 'application/json',
       },
     });
     return response.data;
@@ -52,17 +53,19 @@ async function getRetailer(id) {
   }
 }
 
-async function updateRetailer(id, name, email, farmName, location) {
+async function updateRetailer(id, name, email, farmName, location, role) {
   try {
-    const formData = new FormData();
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('farmName', farmName);
-    formData.append('location', location);
+    const formData = {
+      name,
+      email,
+      farmName,
+      location,
+      role
+    };
 
     const response = await axios.put(`${apiBaseUrl}/auth/${id}`, formData, {
       headers: {
-        'Content-Type':'multipart/form-data'
+        'Content-Type': 'application/json',
       },
     });
     return response.data;
