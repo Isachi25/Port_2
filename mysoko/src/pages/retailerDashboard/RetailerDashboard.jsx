@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import ProductManagement from '../../components/productmanagement';
 import OrderManagement from '../../components/ordermanagement';
 import ProfileManagement from '../../components/profilemanagement';
 import ReportsAnalytics from '../../components/report';
 import Support from '../../components/support';
+import Logout from '../../components/logout';
 
 const RetailerDashboard = () => {
   const [activeTab, setActiveTab] = useState('products');
@@ -27,11 +27,6 @@ const RetailerDashboard = () => {
       default:
         return <ProductManagement products={products} setProducts={setProducts} />;
     }
-  };
-
-  const handleLogout = () => {
-    // Add logout logic here
-    console.log('User logged out');
   };
 
   return (
@@ -103,12 +98,7 @@ const RetailerDashboard = () => {
           </ul>
         </nav>
         <div>
-          <button
-            onClick={handleLogout}
-            className="w-full text-left px-2 py-2 rounded transition duration-200 ease-in-out hover:bg-red-600"
-          >
-            Logout
-          </button>
+          <Logout /> {/* Use the new LogoutButton component */}
         </div>
       </aside>
 

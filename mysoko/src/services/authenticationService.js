@@ -85,10 +85,18 @@ async function deleteRetailer(id) {
   }
 }
 
+function logout() {
+  // Clear authentication tokens or session data
+  localStorage.removeItem('authToken'); // Example: remove token from localStorage
+  sessionStorage.removeItem('authToken'); // Example: remove token from sessionStorage
+  // Add any other logout logic here
+}
+
 export {
   login,
   createRetailer,
   getRetailer,
   updateRetailer,
   deleteRetailer,
+  logout, // Export the new logout function
 };
