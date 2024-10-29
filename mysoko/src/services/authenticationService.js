@@ -53,6 +53,16 @@ async function getRetailer(id) {
   }
 }
 
+async function getRetailers() {
+  try {
+    const response = await axios.get(`${apiBaseUrl}/auth`);
+    return response.data;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
+}
+
 async function updateRetailer(id, name, email, farmName, location, role) {
   try {
     const formData = {

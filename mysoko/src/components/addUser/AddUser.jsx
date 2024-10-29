@@ -34,7 +34,7 @@ const AddUser = ({ users, setUsers }) => {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">User Management</h2>
+      <h2 className="text-2xl font-bold mb-4">Retailer Management</h2>
       <form onSubmit={handleAddUser} className="mb-4">
         <input
           type="text"

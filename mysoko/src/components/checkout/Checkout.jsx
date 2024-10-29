@@ -1,17 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../../components/button';
+import { createOrder } from '../../services/orderService';
 
-const Checkout = ({ closeModal }) => {
+const Checkout = ({ closeModal, onSuccessfulCheckout }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
     address: '',
-    productId: '',
-    quantity: 1,
   });
 
+  const [cart, setCart] = useState([]);
   const [message, setMessage] = useState('');
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  useEffect(() => {
+    const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
+    setCart(storedCart);
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,47 +26,37 @@ const Checkout = ({ closeModal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await fetch('http://localhost:4000/api/v1/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify([
-          {
-            clientName: formData.name,
-            email: formData.email,
-            phoneNumber: formData.phone,
-            address: formData.address,
-            productId: formData.productId,
-            quantity: formData.quantity,
-            status: 'Processing',
-          },
-        ]),
-      });
+    const orders = cart.map(item => ({
+      clientName: formData.name,
+      email: formData.email,
+      phoneNumber: formData.phone,
+      address: formData.address,
+      productId: item.id,
+      quantity: item.quantity,
+      status: 'Processing',
+    }));
 
-      if (response.ok) {
-        const result = await response.json();
-        setMessage('Order submitted successfully!');
-        console.log(result);
-        closeModal();
-      } else {
-        const errorDetails = await response.json();
-        console.log("Error details:", errorDetails);
-        setMessage(`Failed to submit order: ${errorDetails.message || 'Please check your inputs.'}`);
-      }
+    try {
+      const response = await createOrder(orders);
+
+      setMessage('Order submitted successfully!');
+      setIsSuccess(true);
+      console.log(response);
+      onSuccessfulCheckout(); // Call the callback to clear the cart
     } catch (error) {
       console.error('Error submitting order:', error);
       setMessage('An error occurred while submitting the order.');
+      setIsSuccess(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <div className="mb-4">
-        <label className="block text-gray-700">Name</label>
+        <label htmlFor="name" className="block text-gray-700">Name</label>
         <input
           type="text"
+          id="name"
           name="name"
           value={formData.name}
           onChange={handleChange}
@@ -69,9 +65,10 @@ const Checkout = ({ closeModal }) => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700">Email</label>
+        <label htmlFor="email" className="block text-gray-700">Email</label>
         <input
           type="email"
+          id="email"
           name="email"
           value={formData.email}
           onChange={handleChange}
@@ -80,9 +77,10 @@ const Checkout = ({ closeModal }) => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700">Phone Number</label>
+        <label htmlFor="phone" className="block text-gray-700">Phone Number</label>
         <input
           type="tel"
+          id="phone"
           name="phone"
           value={formData.phone}
           onChange={handleChange}
@@ -91,35 +89,15 @@ const Checkout = ({ closeModal }) => {
         />
       </div>
       <div className="mb-4">
-        <label className="block text-gray-700">Address</label>
+        <label htmlFor="address" className="block text-gray-700">Address</label>
         <input
           type="text"
+          id="address"
           name="address"
           value={formData.address}
           onChange={handleChange}
           className="w-full p-2 border rounded"
           autoComplete="street-address"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Product ID</label>
-        <input
-          type="text"
-          name="productId"
-          value={formData.productId}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700">Quantity</label>
-        <input
-          type="number"
-          name="quantity"
-          value={formData.quantity}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          min="1"
         />
       </div>
       <div className="flex justify-center">
@@ -137,7 +115,11 @@ const Checkout = ({ closeModal }) => {
           Cancel
         </Button>
       </div>
-      {message && <p className="text-center mt-4 text-red-500">{message}</p>}
+      {message && (
+        <p className={`text-center mt-4 ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
+          {message}
+        </p>
+      )}
     </form>
   );
 };

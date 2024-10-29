@@ -34,6 +34,12 @@ function Cart() {
     setIsModalOpen(false);
   };
 
+  const handleSuccessfulCheckout = () => {
+    setCartItems([]);
+    localStorage.removeItem('cart');
+    closeModal();
+  };
+
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Cart</h1>
@@ -78,7 +84,7 @@ function Cart() {
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md mx-auto">
           <h2 className="text-2xl font-bold mb-4">Checkout</h2>
-          <Checkout closeModal={closeModal} />
+          <Checkout closeModal={closeModal} onSuccessfulCheckout={handleSuccessfulCheckout} />
         </div>
       </Modal>
     </div>
